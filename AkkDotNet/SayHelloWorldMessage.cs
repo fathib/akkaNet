@@ -31,16 +31,16 @@ namespace AkkDotNetV1
 
 namespace AkkDotNetV2
 {
-    public class Extract : TypedActor, IHandle<AkkDotNet.ETLMessage>
+    public class Extract : TypedActor, IHandle<ETLMessage>
     {
         private int count;
         IActorRef childActorTransform;
         public Extract()
         {
-            childActorTransform = Context.ActorOf(Props.Create<AkkDotNet.Transform>());
+            childActorTransform = Context.ActorOf(Props.Create<Transform>());
         }
 
-        public void Handle(AkkDotNet.ETLMessage message)
+        public void Handle(ETLMessage message)
         {
             Thread.Sleep(3000);
             count++;
@@ -52,10 +52,10 @@ namespace AkkDotNetV2
     }
 
 
-    public class Transform : TypedActor, IHandle<AkkDotNet.ETLMessage>
+    public class Transform : TypedActor, IHandle<ETLMessage>
     {
         private int count;
-        public void Handle(AkkDotNet.ETLMessage message)
+        public void Handle(ETLMessage message)
         {
             Thread.Sleep(6000);
             count++;
@@ -83,18 +83,17 @@ namespace AkkDotNetV2
 
 namespace  AkkDotNetV3
 {
-    public class Extract : TypedActor, IHandle<AkkDotNet.ETLMessage>
+    public class ExtractActor : TypedActor, IHandle<ETLMessage>
     {
-        private int count;
         IActorRef childActorTransform;
         IActorRef childActorError;
-        public Extract()
+        public ExtractActor()
         {
-            childActorTransform = Context.ActorOf(Props.Create<AkkDotNet.Transform>());
-            childActorError = Context.ActorOf(Props.Create<AkkDotNet.ErrorActor>());
+            childActorTransform = Context.ActorOf(Props.Create<TransformActor>());
+            childActorError = Context.ActorOf(Props.Create<ErrorActor>());
         }
 
-        public void Handle(AkkDotNet.ETLMessage message)
+        public void Handle(ETLMessage message)
         {
             if (message.Message.StartsWith("a"))
             {
@@ -102,8 +101,7 @@ namespace  AkkDotNetV3
                 return;
             }
             Thread.Sleep(3000);
-            count++;
-            var newMessage = string.Format("> EXTRACT :{0}  {1}", count, message.Message);
+            var newMessage = string.Format("> EXTRACT :#{0} -- {1}", message.DataId, message.Message);
             Console.WriteLine(newMessage);
             childActorTransform.Tell(message);
 
@@ -111,26 +109,22 @@ namespace  AkkDotNetV3
     }
 
 
-    public class Transform : TypedActor, IHandle<AkkDotNet.ETLMessage>
+    public class TransformActor : TypedActor, IHandle<ETLMessage>
     {
-        private int count;
-        public void Handle(AkkDotNet.ETLMessage message)
+        public void Handle(ETLMessage message)
         {
             Thread.Sleep(6000);
-            count++;
-            var newMessage = string.Format(">>>>>> TRANSFORM :{0}  {1}", count, message.Message);
+            var newMessage = string.Format(">>>>>> TRANSFORM :#{0} -- {1}", message.DataId, message.Message);
             Console.WriteLine(newMessage);
         }
     }
 
 
-    public class ErrorActor : TypedActor, IHandle<AkkDotNet.ETLMessage>
+    public class ErrorActor : TypedActor, IHandle<ETLMessage>
     {
-        private int count;
-        public void Handle(AkkDotNet.ETLMessage message)
+        public void Handle(ETLMessage message)
         {
-            count++;
-            var newMessage = string.Format(">>>>>> IN ERROR :{0}  {1}", count, message.Message);
+            var newMessage = string.Format(">>>>>> IN ERROR :#{0} -- {1}", message.DataId, message.Message);
 
             Console.WriteLine(newMessage);
 
@@ -140,13 +134,14 @@ namespace  AkkDotNetV3
 
     public class ETLMessage
     {
-        public ETLMessage(string message)
+        public ETLMessage(string message, int dataId)
         {
             Message = message;
+            DataId = dataId;
         }
 
         public string Message { get; private set; }
-
+        public int DataId { get; private set; }
     }
 
 }

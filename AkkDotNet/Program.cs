@@ -1,95 +1,72 @@
 ﻿using Akka.Actor;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using AkkDotNetV3;
 
 namespace AkkDotNet
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            using (var system = ActorSystem.Create("ETL"))
-            {
-                IActorRef extractActor = system.ActorOf(Props.Create<Extract>());
-
-
-                Console.WriteLine("Messages à traiter:");
-                while (true)
-                {
-                    string line = Console.ReadLine();
-                    extractActor.Tell(new ETLMessage(line));
-                }
-            }
-        }
-    }
-
-    public class Extract : TypedActor, IHandle<ETLMessage>
+static void Main(string[] args)
+{
+    using (var system = ActorSystem.Create("ETL"))
     {
-        private int count;
-        IActorRef childActorTransform;
-        IActorRef childActorError;
-        public Extract()
-        {
-            childActorTransform = Context.ActorOf(Props.Create<Transform>());
-            childActorError = Context.ActorOf(Props.Create<ErrorActor>());
-        }
+        IActorRef extractActor = system.ActorOf(Props.Create<ExtractActor>());
 
-        public void Handle(ETLMessage message)
-        {
-            if (message.Message.StartsWith("a"))
-            {
-                childActorError.Tell(message);
-                return;
-            }
-            Thread.Sleep(3000);
-            count++;
-            var newMessage = string.Format("> EXTRACT :{0}  {1}", count, message.Message);
-            Console.WriteLine(newMessage);
-            childActorTransform.Tell(message);
-
-        }
-    }
-
-
-    public class Transform : TypedActor, IHandle<ETLMessage>
-    {
-        private int count;
-        public void Handle(ETLMessage message)
-        {
-            Thread.Sleep(6000);
-            count++;
-            var newMessage = string.Format(">>>>>> TRANSFORM :{0}  {1}", count, message.Message);
-            Console.WriteLine(newMessage);
-        }
-    }
-
-
-    public class ErrorActor : TypedActor, IHandle<ETLMessage>
-    {
-        private int count;
-        public void Handle(ETLMessage message)
+        var count = 0;
+        Console.WriteLine("Messages à traiter:");
+        while (true)
         {
             count++;
-            var newMessage = string.Format(">>>>>> IN ERROR :{0}  {1}", count, message.Message);
+            string line = Console.ReadLine();
+            var message = new ETLMessage(line, count);
+            extractActor.Tell(message);
+        }
+    }
+}
+    }
+
+    public class Ping : TypedActor, IHandle<PingPongCounterMessage>
+    {
+        
+        IActorRef children;
+        public Ping()
+        {
+            children = Context.ActorOf(Props.Create<Pong>());
+        }
+
+        public void Handle(PingPongCounterMessage message)
+        {
+            Thread.Sleep(1000);
             
-            Console.WriteLine(newMessage);
-            
+            Console.WriteLine("ping"+ message.Count);
+            children.Tell(new PingPongCounterMessage(message.Count + 1));
         }
     }
 
 
-    public class ETLMessage
+    public class Pong : TypedActor, IHandle<PingPongCounterMessage>
     {
-        public ETLMessage(string message)
+        
+        public void Handle(PingPongCounterMessage message)
         {
-            Message = message;
+            Thread.Sleep(1000);
+            
+            Console.WriteLine("pong"+message.Count);
+            Sender.Tell(new PingPongCounterMessage(message.Count+1));
+        }
+    }
+
+    
+
+    public class PingPongCounterMessage
+    {
+        public PingPongCounterMessage(int count)
+        {
+            Count = count;
         }
 
-        public string Message { get; private set; }
+        public int Count { get; private set; }
         
     }
 
