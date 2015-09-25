@@ -15,14 +15,15 @@ namespace UnitTestProject1
             int nbRelations= 8;
             Dictionary<int, Person> people = new Dictionary<int, Person>();
             
-            List<string> relations = new List<string> {"1 2",
-                                                    "1 3",
-                                                    "3 4",
-                                                    "2 4",
-                                                    "2 5",
-                                                    "10 11",
-                                                    "10 1",
-                                                    "10 3"};
+            List<string> relations = 
+                            new List<string>{"1 2",
+                                            "1 3",
+                                            "3 4",
+                                            "2 4",
+                                            "2 5",
+                                            "10 11",
+                                            "10 1",
+                                            "10 3"};
 
             for (int i = 0; i < nbRelations; i++)
             {
