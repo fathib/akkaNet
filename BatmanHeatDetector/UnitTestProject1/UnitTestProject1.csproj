@@ -61,6 +61,8 @@
     <Compile Include="SuiteDeConway.cs" />
     <Compile Include="NumeroTelephone.cs" />
     <Compile Include="NainsEpaulesGeants.cs" />
+    <Compile Include="Bender.cs" />
+    <Compile Include="Scrabble.cs" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
