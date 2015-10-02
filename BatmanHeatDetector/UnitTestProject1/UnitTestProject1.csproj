@@ -64,6 +64,7 @@
     <Compile Include="Bender.cs" />
     <Compile Include="Scrabble.cs" />
     <Compile Include="LeCadeauTest.cs" />
+    <Compile Include="CalculMayaTest.cs" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
