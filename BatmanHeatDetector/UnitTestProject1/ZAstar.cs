@@ -29,16 +29,39 @@ namespace ZAstarNamespace
         Closed
     }
 
+    public class Parameter
+    {
+        public Point StartLocation { get; set; }
+        public Point EndLocation { get; set; }
+        public string[,] Map { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+    }
+
+
 
     public class Algo
     {
         private int width;
         private int height;
-        public Point StartLocation { get; set; }
-        public Point EndLocation { get; set; }
-        public bool[,] Map { get; set; }
+        public Node StartNode { get; set; }
+        public Node EndNode { get; set; }
 
         public Node[,] Nodes { get; set; }
+
+        public Algo(Parameter parameter)
+        {
+            Nodes = new Node[parameter.Width,parameter.Height];
+
+            for (int x = 0; x < parameter.Width; x++)
+            {
+                for (int y = 0; x < parameter.Height; y++)
+                {
+                    
+                }
+            }
+
+        }
 
         private List<Node> GetAdjacentWalkableNodes(Node fromNode)
         {
@@ -94,7 +117,7 @@ namespace ZAstarNamespace
             nextNodes.Sort((node1, node2) => node1.F.CompareTo(node2.F));
             foreach (var nextNode in nextNodes)
             {
-                if (nextNode.Location == this.EndLocation)
+                if (nextNode.Location == EndNode.Location)
                 {
                     return true;
                 }
@@ -113,15 +136,11 @@ namespace ZAstarNamespace
         public List<Point> FindPath()
         {
             List<Point> path = new List<Point>();
-            Node startLocation = Nodes[StartLocation.X, StartLocation.Y];
-            Node endNode = Nodes[EndLocation.X, EndLocation.Y];
-
-
-
-            bool success = Search(startLocation);
+            
+            bool success = Search(StartNode);
             if (success)
             {
-                Node node = endNode;
+                Node node = EndNode;
                 while (node.ParentNode != null)
                 {
                     path.Add(node.Location);

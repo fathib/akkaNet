@@ -42,6 +42,12 @@ namespace AstarSample
             _walls.Add(new Wall(p, o));
         }
 
+
+        public void LoadMap(List<string> board)
+        {
+            
+        }
+
         private List<Node> GetAdjacentWalkableNodes(Node currentNode)
         {
             List<Node> nodes = new List<Node>();
@@ -184,7 +190,7 @@ namespace AstarSample
         {
           
             Position= new Point(x,y);
-            State = NodeState.Open;
+            State = NodeState.Untested;
         }
 
         public Point Position { get;  set; }
@@ -218,6 +224,10 @@ namespace AstarSample
         Right
     }
 
-    public enum NodeState { Untested, Open, Closed }
+    public enum NodeState
+    { Untested,
+        Open,
+        Closed
+    }
 
 }
