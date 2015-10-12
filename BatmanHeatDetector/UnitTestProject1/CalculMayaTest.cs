@@ -12,8 +12,8 @@ namespace UnitTestProject1
         public void TestMethod_Load()
         {
 
-            List<string> refData= new List<string>();
-            List<string> chiffreA = new List<string>();
+            var refData= new List<string>();
+            var chiffreA = new List<string>();
             List<string> chiffreB = new List<string>();
             List<string> result = new List<string>();
             int width = 4;
