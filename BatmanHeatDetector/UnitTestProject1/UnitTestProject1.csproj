@@ -54,6 +54,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CrachBoursier.cs" />
+    <Compile Include="GreatEscape\GreatEscapeGame.cs" />
+    <Compile Include="GreatEscape\Node.cs" />
+    <Compile Include="GreatEscape\NodeState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Horses.cs" />
     <Compile Include="NetworkCabling.cs" />
@@ -65,7 +68,6 @@
     <Compile Include="Scrabble.cs" />
     <Compile Include="LeCadeauTest.cs" />
     <Compile Include="CalculMayaTest.cs" />
-    <Compile Include="TheGreatEscape.cs" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -22,31 +22,103 @@ namespace UnitTestProject1
             refData.Add("o..o................____________________________________________________________");
             refData.Add(".oo.........................................____________________________________");
             refData.Add("................................................................________________");
-            //4
+          
+            //16
             chiffreA.Add("o...");
             chiffreA.Add("....");
             chiffreA.Add("....");
+            chiffreA.Add("....");//1
+
+            chiffreA.Add("____");
+            chiffreA.Add("____");
+            chiffreA.Add("....");
+            chiffreA.Add("....");
+
+            chiffreA.Add("oo..");
+            chiffreA.Add("____");
+            chiffreA.Add("____");
+            chiffreA.Add("____");
+
+            chiffreA.Add("....");
+            chiffreA.Add("____");
+            chiffreA.Add("....");
             chiffreA.Add("....");
             //4");
-            chiffreB.Add("o...");
+           
+
+
+            chiffreB.Add("oooo");
             chiffreB.Add("....");
             chiffreB.Add("....");
+            chiffreB.Add("....");
+            chiffreB.Add("ooo.");
+            chiffreB.Add("____");
+            chiffreB.Add("____");
+            chiffreB.Add("____");
+            chiffreB.Add("oo..");
+            chiffreB.Add("____");
+            chiffreB.Add("____");
+            chiffreB.Add("....");
+            chiffreB.Add("____");
+            chiffreB.Add("____");
+            chiffreB.Add("....");
+            chiffreB.Add("....");
+            chiffreB.Add("oo..");
+            chiffreB.Add("____");
+            chiffreB.Add("____");
             chiffreB.Add("....");
 
-            //Result
+
+            result.Add("oo..");
+            result.Add("____");
+            result.Add("....");
+            result.Add("....");
+
+            result.Add("oo..");
+            result.Add("____");
+            result.Add("____");
+            result.Add("....");
+
+            result.Add("ooo.");
+            result.Add("....");
+            result.Add("....");
+            result.Add("....");
+
+            result.Add("oo..");
+            result.Add("____");
+            result.Add("____");
+            result.Add("____");
+
+            result.Add("oooo");
+            result.Add("....");
+            result.Add("....");
+            result.Add("....");
+
             result.Add("oo..");
             result.Add("....");
             result.Add("....");
+            result.Add("....");
+
+            result.Add("oo..");
+            result.Add("____");
+            result.Add("____");
+            result.Add("____");
+
+            result.Add(".oo.");
+            result.Add("o..o");
+            result.Add(".oo.");
             result.Add("....");
             //+");
 
             CalculMaya cm = new CalculMaya(width, lenght);
             cm.LoadDictionnary(refData);
-            int va = cm.LoadValues(chiffreA);
-            int vb = cm.LoadValues(chiffreB);
-            int resultInInt = cm.ExecuteOperation("+", va, vb);
+            var va = cm.LoadValues(chiffreA);
+            var vb = cm.LoadValues(chiffreB);
+            var vt = va*vb;
+            var vr = cm.LoadValues(result);
+            var chiffreBInInt = cm.ExecuteOperation("*", va, vb);
 
-            var mayaCodeInt = cm.EncodeToInteger(resultInInt);
+            var mayaCodeInt = cm.EncodeToInteger(chiffreBInInt);
 
             List<string> mayaCode = cm.EncodeToMayaCode(mayaCodeInt);
 
@@ -197,7 +269,7 @@ namespace UnitTestProject1
 
 
 
-        public int ExecuteOperation(string mathOperator, int a, int b)
+        public double ExecuteOperation(string mathOperator, int a, int b)
         {
             if (mathOperator.Equals("+"))
                 return a + b;
@@ -214,26 +286,26 @@ namespace UnitTestProject1
         }
 
 
-        public List<int> EncodeToInteger(int value)
+        public List<int> EncodeToInteger(double value)
         {
             
             List<int> values = new List<int>();
-            int valeur = value;
+            double valeur = value;
             int puissance = PuissanceMax(value, 20);
 
             for (int i = puissance; i >= 0; i--)
             {
-                int reste = 0;
+                double reste = 0;
                 if (i > 0)
                 {
-                    int multiplicateur = valeur/(int) Math.Pow(20, i);
+                    int multiplicateur =(int) (valeur/ Math.Pow(20, i));
 
-                    reste= valeur - multiplicateur*(int)Math.Pow(20, i);
-                    values.Add(multiplicateur);
+                    reste= valeur - multiplicateur*Math.Pow(20, i);
+                    values.Add((int)multiplicateur);
                 }
                 else
                 {
-                    values.Add(valeur);
+                    values.Add((int)valeur);
                 }
                 
                 valeur = reste;
@@ -245,7 +317,7 @@ namespace UnitTestProject1
         }
 
 
-        public static int PuissanceMax(int valeurX, int puissance)
+        public static int PuissanceMax(double valeurX, int puissance)
         {
             double valeurPuissance = Math.Log(valeurX) / Math.Log(puissance);
 
