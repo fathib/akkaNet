@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,13 +39,33 @@ namespace UnitTestProject1.GreatEscape
                 _mainDirection = Direction.Top;
             else 
                 _mainDirection = Direction.Down;
+
+            LoadMap();
         }
 
-        public void LoadMap(List<string> board)
+        private void LoadMap()
         {
-            //todo
-        }
+            for (int x=0; x < _width; x++)
+            {
+                for (int y=0; y < _height; y++)
+                {
 
+                    int estimatedCostToEnd = 0;
+
+                    if (_mainDirection == Direction.Right)
+                        estimatedCostToEnd = _width - x;
+                    else if (_mainDirection == Direction.Left)
+                        estimatedCostToEnd = x;
+                    else if (_mainDirection == Direction.Down)
+                        estimatedCostToEnd = _height- y;
+                    else if (_mainDirection == Direction.Top)
+                        estimatedCostToEnd = y;
+
+
+                    _map[x,y] = new Node(x,y,estimatedCostToEnd);
+                }
+            }
+        }
         public void LoadWall(int x, int y, string orientation)
         {
             Point p = new Point(x, y);
@@ -57,7 +78,37 @@ namespace UnitTestProject1.GreatEscape
             _playersPositions[Id] = new Point(x,y);
         }
 
-        public List<Point> FindPath()
+
+        public void Clear()
+        {
+            _walls.Clear();
+            _endNode = null;
+        }
+        public string GetNextOrder()
+        {
+            string order = String.Empty;
+            var path = FindPath();
+
+            var nbMove = path.Count;
+            //no available exit
+            
+
+            var nextPosition = path[0];
+            Point myPosition = _playersPositions[_myId];
+            
+            if (nextPosition.X > myPosition.X)
+                order = "RIGHT";
+            else if (nextPosition.X < myPosition.X)
+                order = "LEFT";
+            if (nextPosition.Y > myPosition.Y)
+                order = "DOWN";
+            else if (nextPosition.X < myPosition.X)
+                order = "UP";
+
+            return order;
+            
+        }
+        private List<Point> FindPath()
         {
             // The start node is the first entry in the 'open' list
             List<Point> path = new List<Point>();
@@ -113,16 +164,17 @@ namespace UnitTestProject1.GreatEscape
 
         private bool IsEndLocation(Node nextNode)
         {
+            
             if (_mainDirection == Direction.Right)
-                return nextNode.Location.X == _width;
+                return nextNode.Location.X == _width - 1;
             else if (_mainDirection == Direction.Left)
                 return nextNode.Location.X == 0;
             else if (_mainDirection == Direction.Top)
                 return nextNode.Location.Y == 0;
             else 
-                return nextNode.Location.Y == _height;
+                return nextNode.Location.Y == _height-1;
         }
-        
+
         private List<Node> GetAdjacentWalkableNodes(Node fromNode)
         {
 
@@ -169,22 +221,23 @@ namespace UnitTestProject1.GreatEscape
             var y = currentNode.Location.Y;
             var x = currentNode.Location.X;
 
-            if (x < _width && CanMove(currentNode, Direction.Right))
+            if (x < _width-1 && CanMove(currentNode, Direction.Right))
             {
                 nodes.Add(_map[x + 1, y]);
             }
-            if (y < _height && CanMove(currentNode, Direction.Down))
+            if (y < _height-1 && CanMove(currentNode, Direction.Down))
             {
                 nodes.Add(_map[x, y + 1]);
-            }
-            if (x > 0 && CanMove(currentNode, Direction.Left))
-            {
-                nodes.Add(_map[x - 1, y]);
             }
             if (y > 0 && CanMove(currentNode, Direction.Top))
             {
                 nodes.Add(_map[x, y - 1]);
             }
+            if (x > 0 && CanMove(currentNode, Direction.Left))
+            {
+                nodes.Add(_map[x - 1, y]);
+            }
+            
             
             return nodes;
         }
@@ -192,6 +245,8 @@ namespace UnitTestProject1.GreatEscape
 
         private bool CanMove(Node currentNode, Direction direction)
         {
+            //if (_walls.Count == 0)
+            //    return true;
             bool canMove = true;
 
             List<Point> possibleWallPosition = new List<Point>();
@@ -206,8 +261,8 @@ namespace UnitTestProject1.GreatEscape
                 // x||
                 //   |
 
-                possibleWallPosition.Add(new Point(currentNode.Location.X, currentNode.Location.Y));
-                possibleWallPosition.Add(new Point(currentNode.Location.X, currentNode.Location.Y - 1));
+                possibleWallPosition.Add(new Point(currentNode.Location.X+1, currentNode.Location.Y));
+                possibleWallPosition.Add(new Point(currentNode.Location.X+1, currentNode.Location.Y - 1));
             }
             else if (direction == Direction.Left)
             {
@@ -230,15 +285,120 @@ namespace UnitTestProject1.GreatEscape
                 possibleWallPosition.Add(new Point(currentNode.Location.X - 1, currentNode.Location.Y + 1));
             }
 
-            var q = (from w in _walls
+            var blockerWall = (from w in _walls
                      join y in possibleWallPosition on w.WallPosition equals y
                      where w.WallOrientation == wallOrientation
                      select w).FirstOrDefault();
 
-            return q != null;
+            return blockerWall == null;
 
         }
 
 
     }
+
+
+
+    public class Node
+    {
+        private Node parentNode;
+
+        /// <summary>
+        /// The node's location in the grid
+        /// </summary>
+        public Point Location { get; private set; }
+
+
+
+        /// <summary>
+        /// Estimated cost from here to end
+        /// </summary>
+        public int EstimatedCostToEnd { get; set; }
+
+        /// <summary>
+        /// Cost from start to here
+        /// </summary>
+        public int CostFromStart { get; set; }
+
+        /// <summary>
+        /// Estimated total cost (F = G + H)
+        /// </summary>
+        public float EstimatedTotalCost
+        {
+            get { return this.CostFromStart + this.EstimatedCostToEnd; }
+        }
+
+
+        /// <summary>
+        /// Flags whether the node is open, closed or untested by the PathFinder
+        /// </summary>
+        public NodeState State { get; set; }
+
+
+        public Node(int x, int y, int estimatedCostToEnd)
+        {
+            this.Location = new Point(x, y);
+            this.State = NodeState.Untested;
+
+            EstimatedCostToEnd = estimatedCostToEnd;
+
+            CostFromStart = 0;
+        }
+
+        public Node ParentNode
+        {
+            get { return this.parentNode; }
+            set { this.parentNode = value; }
+        }
+
+        public static int GetTraversalCost()
+        {
+            return 1;
+        }
+    }
+
+    public enum NodeState
+    {
+        /// <summary>
+        /// The node has not yet been considered in any possible paths
+        /// </summary>
+        Untested,
+        /// <summary>
+        /// The node has been identified as a possible step in a path
+        /// </summary>
+        Open,
+        /// <summary>
+        /// The node has already been included in a path and will not be considered again
+        /// </summary>
+        Closed
+    }
+
+
+    public enum Direction
+    {
+        Top,
+        Down,
+        Left,
+        Right
+    }
+    public enum Orientation
+    {
+        Horizontal,
+        Veritcal
+    }
+
+    public class Wall
+    {
+        public Point WallPosition { get; set; }
+
+        public Orientation WallOrientation { get; set; }
+
+        public Wall(Point position, Orientation orientation)
+        {
+            WallPosition = position;
+            WallOrientation = orientation;
+        }
+    }
+
+
 }
