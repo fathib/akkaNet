@@ -43,5 +43,18 @@ namespace UnitTestProject1.GreatEscape
             Assert.AreNotEqual("RIGHT", order);
 
         }
+
+
+        [TestMethod]
+        public void Wall_should_be_esquived_when_near_to_End()
+        {
+            GreatEscapeGame game = new GreatEscapeGame(9, 9, 2, 0);
+
+            game.LoadPlayersPositions(7, 8, 0);
+            game.LoadWall(8, 7, "V");
+            var order = game.GetNextOrder();
+            Assert.AreEqual("UP", order);
+
+        }
     }
 }

@@ -100,9 +100,9 @@ namespace UnitTestProject1.GreatEscape
                 order = "RIGHT";
             else if (nextPosition.X < myPosition.X)
                 order = "LEFT";
-            if (nextPosition.Y > myPosition.Y)
+            else if (nextPosition.Y > myPosition.Y)
                 order = "DOWN";
-            else if (nextPosition.X < myPosition.X)
+            else if (nextPosition.Y < myPosition.Y)
                 order = "UP";
 
             return order;

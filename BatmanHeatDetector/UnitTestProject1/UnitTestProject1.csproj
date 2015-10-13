@@ -59,6 +59,7 @@
     <Compile Include="GreatEscape\Node.cs" />
     <Compile Include="GreatEscape\NodeState.cs" />
     <Compile Include="GreatEscape\Orientation.cs" />
+    <Compile Include="GreatEscape\GreatEscapeTest.cs" />
     <Compile Include="GreatEscape\Wall.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Horses.cs" />
