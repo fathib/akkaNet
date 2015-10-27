@@ -7,63 +7,13 @@ using System.Threading.Tasks;
 
 namespace UnitTestProject1.Labyrinthe
 {
-
-    public class Labyrinthe
-    {
-        private readonly int _width;
-        private readonly int _height;
-        private readonly int _nbMove;
-
-        private Node _initialPosition;
-        private Node _controlRoom;
-
-        private Node[,] _map;
-
-
-        public Labyrinthe(int width, int height, int nbMove)
-        {
-            _width = width;
-            _height = height;
-            _nbMove = nbMove;
-            _map= new Node[width,height];
-        }
-
-
-        public void LoadLineForWall(int rank, string content)
-        {
-            for (int x = 0; x < _width; x++)
-            {
-                char c = content[x];
-                Node n = _map[x, rank];
-
-                //first time
-                if(n == null)
-                    n = new Node(x,rank,c);
-                else if (n.Content == NodeContent.Unknown )//we know the content
-                    n.SetContent(c);
-
-                if (n.Content == NodeContent.KirkPosition)
-                    _initialPosition = n;
-
-                if (n.Content == NodeContent.CommandRoom)
-                    _controlRoom= n;
-                
-            }
-        }
-
-
-    }
-
     public class Node
     {
 
         public Node(int x, int y, char content)
         {
             Position = new Point(x,y);
-
-
             SetContent(content);
-
             State = NodeState.Untested;
         }
 
@@ -81,12 +31,21 @@ namespace UnitTestProject1.Labyrinthe
                 Content = NodeContent.Wall;
             else if (content == '?')
                 Content = NodeContent.Unknown;
+            else if (content == 'T')
+                Content = NodeContent.KirkPosition;
+            else if (content == 'C')
+                Content = NodeContent.CommandRoom;
         }
 
         public Point Position { get; set; }
 
         public int DistanceFromStart { get; set; }
 
+        public bool IsWalkable
+        {
+            get { return Content != NodeContent.Wall; }
+            
+        }
     }
 
     public enum NodeContent
@@ -113,4 +72,6 @@ namespace UnitTestProject1.Labyrinthe
         LEFT,
         RIGHT,
     }
+
+
 }

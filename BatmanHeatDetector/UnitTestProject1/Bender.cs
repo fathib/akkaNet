@@ -9,10 +9,31 @@ namespace UnitTestProject1
     [TestClass]
     public class BenderTest
     {
+
+
+        [TestMethod]
+        public void TestMethodXXXXX()
+        {
+            //List<int> l = new List<int>();
+            //l.Add(1);
+            //l.Add(7);
+            //l.Add(3);
+            //l.Add(5);
+
+            //var s = string.Join(" ", l);
+
+            string s = ".2A1N5Y64!";
+
+            var q =string.Join("",s.Where(_ => Char.IsLetter(_)));
+
+        }
+
+
         [TestMethod]
         public void TestMethod1()
         {
-
+          
+            
             int lines = 10;
             int columns = 10;
             List<string> input = new List<string>

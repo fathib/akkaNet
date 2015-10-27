@@ -11,7 +11,6 @@ namespace BatmanHeatDetector
 
         public void Foo()
         {
-           
         }
     }
 }
