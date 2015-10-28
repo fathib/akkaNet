@@ -39,7 +39,7 @@ namespace UnitTestProject1.Labyrinthe
 
         public Point Position { get; set; }
 
-        public int DistanceFromStart { get; set; }
+        public float DistanceFromStart { get; set; }
 
         public bool IsWalkable
         {

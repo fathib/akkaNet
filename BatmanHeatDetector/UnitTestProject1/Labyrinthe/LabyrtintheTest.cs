@@ -105,5 +105,131 @@ namespace UnitTestProject1.Labyrinthe
             Assert.AreEqual(move, "RIGHT");
             Assert.AreEqual(l.CurrentNode.Position, new Point(4, 2));
         }
+
+        [TestMethod]
+        public void RevienEnArriere()
+        {
+            Labyrinthe l = new Labyrinthe(5, 5, 10);
+            l.LoadLineForWall(0, "#####");
+            l.LoadLineForWall(1, "#####");
+            l.LoadLineForWall(2, "C.T..");
+            l.LoadLineForWall(3, "#####");
+            l.LoadLineForWall(4, "#####");
+
+
+            //mauvais chemin
+            var move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+
+            //aller
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+            //retour
+             move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+        }
+
+        [TestMethod]
+        public void RevienEnArriereETVaEnBas()
+        {
+            Labyrinthe l = new Labyrinthe(5, 5, 10);
+            l.LoadLineForWall(0, "#####");
+            l.LoadLineForWall(1, "#####");
+            l.LoadLineForWall(2, "#.T..");
+            l.LoadLineForWall(3, "##.##");
+            l.LoadLineForWall(4, "##C##");
+
+
+            //mauvais chemin
+            var move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+
+            //aller
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+
+            move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+            
+            move = l.DoSomething();
+            Assert.AreEqual(move, "DOWN");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "DOWN");
+
+            move = l.DoSomething();
+            Assert.AreEqual(move, "UP");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "UP");
+        }
+
+
+
+
+        [TestMethod]
+        public void SalleVIde()
+        {
+            Labyrinthe l = new Labyrinthe(5, 5, 10);
+            l.LoadLineForWall(0, "T....");
+            l.LoadLineForWall(1, ".....");
+            l.LoadLineForWall(2, ".....");
+            l.LoadLineForWall(3, ".....");
+            l.LoadLineForWall(4, "....C");
+
+
+            //mauvais chemin
+            var move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "RIGHT");
+
+            move = l.DoSomething();
+            Assert.AreEqual(move, "DOWN");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "DOWN");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "DOWN");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "DOWN");
+
+            move = l.DoSomething();
+            Assert.AreEqual(move, "UP");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "UP");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "UP");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "UP");
+            //aller
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+            move = l.DoSomething();
+            Assert.AreEqual(move, "LEFT");
+            
+        }
+
     }
 }

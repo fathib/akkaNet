@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace UnitTestProject1.Labyrinthe
 {
+
     public class Labyrinthe
     {
         private readonly int _width;//x
@@ -69,20 +72,30 @@ namespace UnitTestProject1.Labyrinthe
             CurrentNode.State =NodeState.Closed;
             var cNode = CurrentNode;
 
-
+            //go back to initial room
             if (CurrentNode.Content == NodeContent.CommandRoom)
             {
                 _goBack = true;
             }
-            Direction direction = Direction.DOWN;
 
-            if (_goBack)
-            {
-                direction = GoBack(cNode);
-            }
-            else 
-                direction = Walk(cNode);
+            Node nextPosition = _goBack? GoBack(cNode): Walk(cNode);
 
+            var direction = GetDirection(CurrentNode, nextPosition);
+
+            //manage Path
+            //if (!_goBack)
+            //{
+            //    if (_road.Count == 0)
+            //        _road.Add(CurrentNode);
+            //    var previousNode = _road.Last();
+            //    //back when the road is closed
+            //    if (previousNode.Position == nextPosition.Position)
+            //        _road.RemoveAt(_road.Count() - 1);
+            //    else //go head
+            //        _road.Add(nextPosition);
+            //}
+
+            CurrentNode = nextPosition;
             return GetOrder(direction);
         }
 
@@ -99,24 +112,17 @@ namespace UnitTestProject1.Labyrinthe
                 return "UP";
         }
 
-        private Direction GoBack(Node currentPosition)
+        private Node GoBack(Node currentPosition)
         {
-            currentPosition.State = NodeState.Closed;
-            Node nextPosition = _road.Last();
-            _road.RemoveAt(_road.Count - 1);
-            if (nextPosition.Position == currentPosition.Position)
-            {
-                nextPosition = _road.Last();
-                _road.RemoveAt(_road.Count - 1);
-            }
+            //_road.RemoveAt(_road.Count - 1);
+            //Node nextPosition = _road.Last();
+            //return nextPosition;
 
-            var d  = GetDirection(currentPosition, nextPosition);
-            CurrentNode = nextPosition;
-            return d;
+            return currentPosition.ParentNode;
 
         }
 
-        public Direction Walk(Node currentPosition)
+        public Node Walk(Node currentPosition)
         {
             var adjacentNodes = GetAdjacentWalkableNodes(currentPosition);
             Node nextPosition = null;
@@ -133,19 +139,22 @@ namespace UnitTestProject1.Labyrinthe
                     nextPosition = commandRoom;
                     ControlRoom = nextPosition;
                 }
-                _road.Add(nextPosition);
             }
             else
             {
                 //go Back
-                currentPosition.State=NodeState.Closed;
-                nextPosition = _road[_road.Count - 1];
-                _road.RemoveAt(_road.Count - 1);
+                //nextPosition = _road[_road.Count- 1];
+                //if (nextPosition.Position == currentPosition.Position)
+                //{
+                //    _road.RemoveAt(_road.Count - 1);
+                //    nextPosition = _road[_road.Count - 1];
+                //}
+                nextPosition = currentPosition.ParentNode;
             }
 
 
-            CurrentNode = nextPosition;
-            return GetDirection(currentPosition, nextPosition);
+            return nextPosition;
+            
         }
 
 
@@ -196,6 +205,7 @@ namespace UnitTestProject1.Labyrinthe
                 if (node.State == NodeState.Open)
                 {
                     node.ParentNode = currentPosition;
+                    node.DistanceFromStart = GetTraversalCost(InitialPosition.Position, node.Position);
                     walkableNodes.Add(node);
                 }
                 else
@@ -203,12 +213,21 @@ namespace UnitTestProject1.Labyrinthe
                     // If it's untested, set the parent and flag it as 'Open' for consideration
                     node.ParentNode = currentPosition;
                     node.State = NodeState.Open;
+                    node.DistanceFromStart = GetTraversalCost(InitialPosition.Position, node.Position);
                     walkableNodes.Add(node);
                 }
             }
 
-            return walkableNodes;
+            return walkableNodes.OrderByDescending(n => n.DistanceFromStart).ToList();
 
+        }
+
+
+        private float GetTraversalCost(Point location, Point otherLocation)
+        {
+            float deltaX = otherLocation.X - location.X;
+            float deltaY = otherLocation.Y - location.Y;
+            return (float)Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
         }
 
         public List<Node> GetAdjacentNodes(Node currentPosition)
@@ -229,9 +248,5 @@ namespace UnitTestProject1.Labyrinthe
         }
 
     }
-
-
-
-
-
+    
 }
