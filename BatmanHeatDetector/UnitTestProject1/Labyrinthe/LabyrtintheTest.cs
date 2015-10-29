@@ -7,8 +7,7 @@ namespace UnitTestProject1.Labyrinthe
     public class LabyrtintheTest
     {
         //TODO
-        //Test with border
-        //implement mainDirection strategy 
+        // go back : check if we have suffisent time to come back
 
         [TestMethod]
         public void LoadMap()
@@ -177,10 +176,7 @@ namespace UnitTestProject1.Labyrinthe
             move = l.DoSomething();
             Assert.AreEqual(move, "UP");
         }
-
-
-
-
+        
         [TestMethod]
         public void SalleVIde()
         {

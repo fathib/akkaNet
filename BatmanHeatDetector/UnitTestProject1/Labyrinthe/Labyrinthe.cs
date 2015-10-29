@@ -5,34 +5,33 @@ using System.Linq;
 
 namespace UnitTestProject1.Labyrinthe
 {
-
     public class Labyrinthe
     {
         private readonly int _width;//x
         private readonly int _height;//y
-        private readonly int _nbMove;
+        private readonly int _nbMoveToReachTheExit;
 
         public Node InitialPosition { get; private set; }
         public Node ControlRoom { get; private set; }
-        private Node _target;
+        
         public Node CurrentNode { get; private set; }
         private bool _goBack = false;
 
 
-        private List<Node> _road = new List<Node>();
+        private List<Node> _roadBack; 
+
         private Node[,] _map;
         public Node[,] Map { get { return _map;} private set { _map = value; } }
-        private Direction _mainDirection;
+        
 
-
-        public Labyrinthe(int width, int height, int nbMove)
+        public Labyrinthe(int width, int height, int nbMoveToReachTheExit)
         {
             _width = width;//x
             _height = height;//y
-            _nbMove = nbMove;
+            _nbMoveToReachTheExit = nbMoveToReachTheExit;
             _map= new Node[width,height];
             ControlRoom = null;
-            _target = null;
+            
         }
 
 
@@ -57,7 +56,6 @@ namespace UnitTestProject1.Labyrinthe
                     if (CurrentNode == null)
                     {
                         CurrentNode = InitialPosition;
-                        _road.Add(CurrentNode);
                     }
                 }
 
@@ -74,27 +72,12 @@ namespace UnitTestProject1.Labyrinthe
 
             //go back to initial room
             if (CurrentNode.Content == NodeContent.CommandRoom)
-            {
                 _goBack = true;
-            }
 
             Node nextPosition = _goBack? GoBack(cNode): Walk(cNode);
 
             var direction = GetDirection(CurrentNode, nextPosition);
-
-            //manage Path
-            //if (!_goBack)
-            //{
-            //    if (_road.Count == 0)
-            //        _road.Add(CurrentNode);
-            //    var previousNode = _road.Last();
-            //    //back when the road is closed
-            //    if (previousNode.Position == nextPosition.Position)
-            //        _road.RemoveAt(_road.Count() - 1);
-            //    else //go head
-            //        _road.Add(nextPosition);
-            //}
-
+            
             CurrentNode = nextPosition;
             return GetOrder(direction);
         }
@@ -114,12 +97,40 @@ namespace UnitTestProject1.Labyrinthe
 
         private Node GoBack(Node currentPosition)
         {
-            //_road.RemoveAt(_road.Count - 1);
-            //Node nextPosition = _road.Last();
-            //return nextPosition;
+            //todo astar for the shortest road
+            if (_roadBack == null)
+            {
+                var road = FindRoad(currentPosition);
 
-            return currentPosition.ParentNode;
+                if (road.Count <= _nbMoveToReachTheExit)
+                    _roadBack = road;
+            }
+            else
+            {
+                //perform an AStart strategy!
 
+            }
+
+            Node nexMove = _roadBack.First();
+            _roadBack.RemoveAt(0);
+            return nexMove;
+
+        }
+
+     
+
+        private List<Node> FindRoad(Node currentPosition)
+        {
+            List<Node> road = new List<Node>();
+            Node node = currentPosition;
+            while (node != InitialPosition)
+            {
+                node = node.ParentNode;
+                road.Add(node);
+            }
+           
+
+            return road;
         }
 
         public Node Walk(Node currentPosition)
@@ -143,18 +154,10 @@ namespace UnitTestProject1.Labyrinthe
             else
             {
                 //go Back
-                //nextPosition = _road[_road.Count- 1];
-                //if (nextPosition.Position == currentPosition.Position)
-                //{
-                //    _road.RemoveAt(_road.Count - 1);
-                //    nextPosition = _road[_road.Count - 1];
-                //}
                 nextPosition = currentPosition.ParentNode;
             }
-
-
-            return nextPosition;
             
+            return nextPosition;
         }
 
 
@@ -219,11 +222,10 @@ namespace UnitTestProject1.Labyrinthe
             }
 
             return walkableNodes.OrderByDescending(n => n.DistanceFromStart).ToList();
-
         }
 
 
-        private float GetTraversalCost(Point location, Point otherLocation)
+        public static float GetTraversalCost(Point location, Point otherLocation)
         {
             float deltaX = otherLocation.X - location.X;
             float deltaY = otherLocation.Y - location.Y;
@@ -248,5 +250,6 @@ namespace UnitTestProject1.Labyrinthe
         }
 
     }
+
     
 }
