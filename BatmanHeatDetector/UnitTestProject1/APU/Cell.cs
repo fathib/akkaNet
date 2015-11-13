@@ -45,6 +45,7 @@ namespace UnitTestProject1.APU
 
         public int NbLinkToPut
         {
+            //TODO handle distinct nodes when connected 2 time with the same node
             get { return Number - LinkedCells.Count(); }
         }
         

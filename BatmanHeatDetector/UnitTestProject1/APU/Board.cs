@@ -42,7 +42,7 @@ namespace UnitTestProject1.APU
 
             var cells = _cellsToLink.Where(c => c.NbLinkToPut > 0).OrderBy(c => c.NbLinkToPut).ToList();
             //TODO
-
+            //gerer le max 2 lien max entre 2 noeuds!!!!!
             while (cells.Count()>0)
             {
                 var from = cells.First();
