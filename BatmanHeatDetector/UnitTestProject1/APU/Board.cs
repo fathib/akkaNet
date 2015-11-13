@@ -8,23 +8,23 @@ namespace UnitTestProject1.APU
     {
         private readonly int _width;
         private readonly int _height;
-        private Cell[,] _map;
+        public Cell[,] Map { get; set; }
         private List<Cell> _cellsToLink = new List<Cell>(); 
 
         public Board(int width, int height)
         {
             _width = width;
             _height = height;
-            _map = new Cell[_width,_height];
+            Map = new Cell[_width,_height];
         }
 
         public void LoadLine(string line, int y)
         {
             for (int x = 0; x < line.Count(); x++)
             {
-                _map[x,y]= new Cell(line[x],x,y);
-                if(!_map[x,y].IsEmpty)
-                    _cellsToLink.Add(_map[x, y]);
+                Map[x,y]= new Cell(line[x],x,y);
+                if(!Map[x,y].IsEmpty)
+                    _cellsToLink.Add(Map[x, y]);
             }
         }
         
@@ -46,7 +46,8 @@ namespace UnitTestProject1.APU
             while (cells.Count()>0)
             {
                 var from = cells.First();
-                var to = from.NeighborCells.First(c => c.NbLink > c.LinkedCells.Count());
+
+                var to = from.NeighborCells.Where(c => c.NbLinkToPut > 0).OrderByDescending(c=>c.NbLinkToPut).First();
                 var messageToPrint = LinkCells(from, to);
                 retVal.Add(messageToPrint);
                 cells = _cellsToLink.Where(c => c.NbLinkToPut > 0).OrderBy(c => c.NbLinkToPut).ToList();
@@ -98,10 +99,10 @@ namespace UnitTestProject1.APU
             //direction 
             //  +1 --> right
             //  -1 --> left
-            if (newXPosition < _width && newXPosition  > 0)
+            if (newXPosition < _width && newXPosition  >= 0)
             {
-                if (!_map[newXPosition, y].IsEmpty)
-                    return _map[newXPosition, y];
+                if (!Map[newXPosition, y].IsEmpty)
+                    return Map[newXPosition, y];
                 else
                     return GetHorizontalNeighbor(newXPosition, y, direction);
             }
@@ -116,10 +117,10 @@ namespace UnitTestProject1.APU
             //  +1 --> down
             //  -1 --> up
 
-            if (newYPosition < _height && newYPosition > 0)
+            if (newYPosition < _height && newYPosition >= 0)
             {
-                if (!_map[x, newYPosition].IsEmpty)
-                    return _map[x, newYPosition];
+                if (!Map[x, newYPosition].IsEmpty)
+                    return Map[x, newYPosition];
                 else
                     return GetVerticalNeighbor(x, newYPosition, direction);
             }

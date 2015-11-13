@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 
 namespace UnitTestProject1.APU
 {
+
     public class Cell
     {
         public bool IsEmpty { get; private set; }
-        public int NbLink { get; private set; }
+        public int Number { get; private set; }
 
         public bool CanCross { get; set; }
 
@@ -29,14 +30,14 @@ namespace UnitTestProject1.APU
             NeighborCells = new List<Cell>();
             if (c == '.')
             {
-                NbLink = 0;
+                Number = 0;
                 IsEmpty = true;
                 CanCross = true;
             }
             else 
             {
                 IsEmpty = false;
-                NbLink = int.Parse(c.ToString());    
+                Number = int.Parse(c.ToString());    
                 CanCross = false;
             }
         }
@@ -44,7 +45,7 @@ namespace UnitTestProject1.APU
 
         public int NbLinkToPut
         {
-            get { return NbLink - LinkedCells.Count(); }
+            get { return Number - LinkedCells.Count(); }
         }
         
         
