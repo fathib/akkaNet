@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Dynamic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,14 +11,45 @@ namespace UnitTestProject1.APU
 {
     public class Cell
     {
+        public bool IsEmpty { get; private set; }
+        public int NbLink { get; private set; }
 
-        //load map
-        //store cells in list
-        //order by capacity
-        //get neighbord (Nord, sud, est, west)
-        // link all nodes -> vérifier que les cells intermediaires ne sont pas tagés
-        //les cells intermédiaires doivent être tagés pour ne plus etre utilisées
-        //    -> les tags peuvent être l' id des cells liées (from/to)
+        public bool CanCross { get; set; }
+
+        public List<Cell> LinkedCells { get; private set; }
+
+        public List<Cell> NeighborCells { get; private set; }
+        public Point Position { get; set; }
+
+
+        public Cell(char c, int x, int y)
+        {
+            Position = new Point(x,y);
+            LinkedCells = new List<Cell>();
+            NeighborCells = new List<Cell>();
+            if (c == '.')
+            {
+                NbLink = 0;
+                IsEmpty = true;
+                CanCross = true;
+            }
+            else 
+            {
+                IsEmpty = false;
+                NbLink = int.Parse(c.ToString());    
+                CanCross = false;
+            }
+        }
+
+
+        public int NbLinkToPut
+        {
+            get { return NbLink - LinkedCells.Count(); }
+        }
+        
+        
         
     }
+
 }
+

@@ -53,7 +53,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="APU\Board.cs" />
     <Compile Include="APU\Cell.cs" />
+    <Compile Include="APU\BoardTest.cs" />
     <Compile Include="CrachBoursier.cs" />
     <Compile Include="Labyrinthe\Labyrinthe.cs" />
     <Compile Include="Labyrinthe\LabyrtintheTest.cs" />
