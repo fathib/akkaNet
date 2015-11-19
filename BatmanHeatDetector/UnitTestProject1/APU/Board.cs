@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,29 +42,46 @@ namespace UnitTestProject1.APU
             //order by neighbors
 
             var cells = _cellsToLink.Where(c => c.NbLinkToPut > 0).OrderBy(c => c.NbLinkToPut).ToList();
-            //TODO
-            //gerer le max 2 lien max entre 2 noeuds!!!!!
+            
+            
             while (cells.Count()>0)
             {
-                var from = cells.First();
+                Cell from = null;
+                //get cells with no choice
+                from = cells.FirstOrDefault(c => c.NbLinkToPut == 1 && c.NeighborCells.Count==1);
+                if(from == null)
+                    from = cells.First();
 
-                var to = from.NeighborCells.Where(c => c.NbLinkToPut > 0).OrderByDescending(c=>c.NbLinkToPut).First();
-                var messageToPrint = LinkCells(from, to);
-                retVal.Add(messageToPrint);
+                LinkSelectedCellToNeighbor(from, retVal);
                 cells = _cellsToLink.Where(c => c.NbLinkToPut > 0).OrderBy(c => c.NbLinkToPut).ToList();
             }
             
-            
-            // link all nodes -> vérifier que les cells intermediaires ne sont pas tagés
-            //les cells intermédiaires doivent être tagés pour ne plus etre utilisées
-            //    -> les tags peuvent être l' id des cells liées (from/to)
-
-
-            //RQ soit on remplit par ordre de priorité (du plus contraint au moins)
-            //   soit on réévalue à chaque lien quelle est la célule la plus contrainte
-            //   soit on organise un graph liée puis on complète
+         
 
             return retVal;
+        }
+
+        private void LinkSelectedCellToNeighbor(Cell from, List<string> retVal)
+        {
+            var messageToPrint = string.Empty;
+            var orderedNeighbors = from.NeighborCells.Where(c => c.NbLinkToPut > 0).OrderByDescending(c => c.NbLinkToPut).ToList();
+            foreach (var neighbor in orderedNeighbors)
+            {
+                if (from.NbLinkToCell(neighbor) < 2)
+                {
+                    messageToPrint = LinkCells(from, neighbor);
+                    break;
+                }
+            }
+
+
+            if (!string.IsNullOrEmpty(messageToPrint))
+            {
+                retVal.Add(messageToPrint);
+                Console.WriteLine(messageToPrint);
+            }
+            //else -> put a bool to say that the cell is not available
+
         }
 
         private string LinkCells(Cell from, Cell to)
@@ -71,7 +89,60 @@ namespace UnitTestProject1.APU
             from.LinkedCells.Add(to);
             to.LinkedCells.Add(from);
 
+            GetIntermediateCells(from, to);
+        
             return from.Position.X + " " + from.Position.Y + " " + to.Position.X + " " + to.Position.Y + " 1";
+        }
+
+        
+
+
+        public void GetIntermediateCells(Cell from, Cell to)
+        {
+            
+            if (from.Position.X == to.Position.X)
+            {
+                int min = Math.Min(from.Position.Y, to.Position.Y);
+                int max = Math.Max(from.Position.Y, to.Position.Y);
+                //get vertical cells
+                for (int y = min+1; y<max; y++ )
+                {
+                    var middleNode = Map[from.Position.X, y];
+
+                    var left = GetHorizontalNeighbor(middleNode.Position.X, middleNode.Position.Y, -1);
+                    var right = GetHorizontalNeighbor(middleNode.Position.X, middleNode.Position.Y, +1);
+                    if (left != null && right != null)
+                    {
+                        //cut nodes link
+                        left.NeighborCells.Remove(left.NeighborCells.FirstOrDefault(c => c.Position == right.Position));
+                        right.NeighborCells.Remove(right.NeighborCells.FirstOrDefault(c => c.Position == left.Position));
+                    }
+                    
+                }
+
+            }
+            else if (from.Position.Y == to.Position.Y)
+            {
+                int min = Math.Min(from.Position.X, to.Position.X);
+                int max = Math.Max(from.Position.X, to.Position.X);
+
+                //get vertical cells
+                for (int x = min; x < max; x++)
+                {
+                    var middleNode= Map[x,from.Position.Y];
+
+                    var top = GetVerticalNeighbor(middleNode.Position.X, middleNode.Position.Y, +1);
+                    var bot = GetVerticalNeighbor(middleNode.Position.X, middleNode.Position.Y, -1);
+                    if (top != null && bot != null)
+                    {
+                        //cut nodes link
+                        top.NeighborCells.Remove(top.NeighborCells.FirstOrDefault(c => c.Position == bot.Position));
+                        bot.NeighborCells.Remove(bot.NeighborCells.FirstOrDefault(c => c.Position == top.Position));
+                    }
+                    
+                }
+            }
+            
         }
 
         private void LoadNeighbors()
@@ -127,6 +198,9 @@ namespace UnitTestProject1.APU
             else
                 return null;
         }
+
+
+      
     }
 
 }

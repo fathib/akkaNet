@@ -1,15 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Dynamic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnitTestProject1.APU
 {
 
+    
     public class Cell
     {
         public bool IsEmpty { get; private set; }
@@ -41,17 +39,37 @@ namespace UnitTestProject1.APU
                 CanCross = false;
             }
         }
-
-
+        
         public int NbLinkToPut
         {
-            //TODO handle distinct nodes when connected 2 time with the same node
+            
             get { return Number - LinkedCells.Count(); }
         }
         
-        
+        public int NbLinkToCell(Cell cell)
+        {
+            
+            return LinkedCells.Count(c => c.Position.Equals(cell.Position));
+        }
         
     }
 
+    public class CellComparer : IComparer<Cell>
+    {
+        public int Compare(Cell x, Cell y)
+        {
+            if (x.NbLinkToPut == y.NbLinkToPut)
+            {
+                //trouver plus fin
+                return x.NeighborCells.Count() - y.NeighborCells.Count();
+
+
+            }
+            else
+                return x.NbLinkToPut - y.NbLinkToPut;
+        }
+
+
+    }
 }
 

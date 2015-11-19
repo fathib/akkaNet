@@ -36,6 +36,18 @@ namespace UnitTestProject1.APU
         }
 
 
+        [TestMethod]
+        public void SimpleCase()
+        {
+            Board b = new Board(2, 2);
+            b.LoadLine("2.", 0);
+            b.LoadLine("42", 1);
+
+            b.DoSomething();
+
+        }
+
+
 
         [TestMethod]
         public void Case_To_Check()
