@@ -75,10 +75,10 @@ namespace UnitTestProject1
             Loop(nodes, 3);
         }
 
-        private static void Loop(List<SkyNetCell> nodes, int IdInitial)
+        private static void Loop(List<SkyNetCell> nodes, int idInitial)
         {
-            SkyNet sn = new SkyNet(nodes, IdInitial );
-            var path = sn.FindPath2();
+            SkyNet sn = new SkyNet(nodes, idInitial );
+            var path = sn.FindPath();
             int n1 = path[0].Id;
             int n2 = path[1].Id;
             string pathToCut = n1 + " " + n2;
@@ -181,46 +181,24 @@ namespace UnitTestProject1
 
 
 
-        public List<SkyNetCell> FindPath2()
-        {
-            // The start node is the first entry in the 'open' list
-            
-            List<SkyNetCell> path = new List<SkyNetCell>();
-
-            Walk2(_startNode);
-
-            var gate = _nodes.Where(n => n.IsGateWay && n.Parent != null).OrderBy(c => c.DistanceFromStart).FirstOrDefault();
-            var parent = gate.Parent;
-            path.Add(parent);
-            path.Add(gate);
-            //gate.Neighbors.Remove(parent);
-            //parent.Neighbors.Remove(gate);
-
-            //return gate.Id+" "+parent.Id;
-
-            return path;
-        }
-
         public List<SkyNetCell> FindPath()
         {
             // The start node is the first entry in the 'open' list
-            List<SkyNetCell> path = new List<SkyNetCell>();
             
-            bool success = Walk(_startNode,null);
-            if (success)
-            {
-                // If a path was found, follow the parents from the end node to build a list of locations
-                var node = this._endNode;
-                while (node.Parent != null)
-                {
-                    path.Add(node);
-                    node = node.Parent;
-                }
+            List<SkyNetCell> path = new List<SkyNetCell>();
 
-                // Reverse the list so it's in the correct order when returned
-                path.Add(_startNode);
-            }
+            Walk(_startNode);
 
+            var gate = _nodes.Where(n => n.IsGateWay && n.Parent != null).OrderBy(c => c.DistanceFromStart).FirstOrDefault();
+
+            //récuperer les gates 
+            //trier par distance et parent commun
+            //couper
+
+            var parent = gate.Parent;
+            path.Add(parent);
+            path.Add(gate);
+            
             return path;
         }
 
@@ -270,7 +248,7 @@ namespace UnitTestProject1
         }
 
 
-        private void Walk2(SkyNetCell currentPosition)
+        private void Walk(SkyNetCell currentPosition)
         {
             var borderCells = new List<SkyNetCell>();
             borderCells.Add(currentPosition);
@@ -309,44 +287,7 @@ namespace UnitTestProject1
             }
 
         }
-        private bool Walk(SkyNetCell currentPosition, List<SkyNetCell> borderCells )
-        {
-            if(borderCells == null)
-                borderCells = new List<SkyNetCell>();
-
-
-
-            currentPosition.Status = SkyNetCellStatus.Close;
-
-
-            var adjacentNodes = GetAdjacentWalkableNodes(currentPosition);
-
-            foreach (var adjacentNode in adjacentNodes)
-            {
-                if(!borderCells.Contains(adjacentNode))
-                    borderCells.Add(adjacentNode);
-            }
-            
-            
-            var gateway = adjacentNodes.FirstOrDefault(n => n.IsGateWay);
-            if (gateway!=null)
-            {
-                _endNode = gateway;
-                return true;
-            }
-
-            borderCells.Where(b=>b.Status!= SkyNetCellStatus.Close).OrderBy(n => n.DistanceFromStart);
-            
-            foreach (var nextNode in adjacentNodes)
-            {
-                if (Walk(nextNode, borderCells)) 
-                    return true;
-            
-            }
-            
-            return false;
-        }
-
+        
     }
 
     public class SkyNetCell
