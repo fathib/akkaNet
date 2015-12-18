@@ -57,14 +57,17 @@
     <Compile Include="APU\Cell.cs" />
     <Compile Include="APU\BoardTest.cs" />
     <Compile Include="CrachBoursier.cs" />
+    <Compile Include="Defibrilateur.cs" />
     <Compile Include="Labyrinthe\Labyrinthe.cs" />
     <Compile Include="Labyrinthe\LabyrtintheTest.cs" />
     <Compile Include="Labyrinthe\Node.cs" />
     <Compile Include="Labyrinthe\PathFinder.cs" />
+    <Compile Include="MarsLander.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Horses.cs" />
     <Compile Include="NetworkCabling.cs" />
     <Compile Include="IndianaTests.cs" />
+    <Compile Include="SkyNetVirus.cs" />
     <Compile Include="SuiteDeConway.cs" />
     <Compile Include="NumeroTelephone.cs" />
     <Compile Include="NainsEpaulesGeants.cs" />

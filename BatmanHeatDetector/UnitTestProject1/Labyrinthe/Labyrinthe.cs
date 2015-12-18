@@ -70,7 +70,7 @@ namespace UnitTestProject1.Labyrinthe
             CurrentNode.State =NodeState.Closed;
             var cNode = CurrentNode;
 
-            //go back to initial room
+            //go back to initial room 
             if (CurrentNode.Content == NodeContent.CommandRoom)
                 _goBack = true;
 
@@ -104,12 +104,13 @@ namespace UnitTestProject1.Labyrinthe
 
                 if (road.Count <= _nbMoveToReachTheExit)
                     _roadBack = road;
-            }
-            else
-            {
-                //perform an AStart strategy!
+                else
+                {
+                    //perform an AStart strategy!
 
+                }
             }
+          
 
             Node nexMove = _roadBack.First();
             _roadBack.RemoveAt(0);
