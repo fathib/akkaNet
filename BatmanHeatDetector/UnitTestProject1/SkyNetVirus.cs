@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UnitTestProject1.Labyrinthe;
 
 namespace UnitTestProject1
 {
@@ -81,8 +77,7 @@ namespace UnitTestProject1
             var path = sn.FindPath();
             int n1 = path[0].Id;
             int n2 = path[1].Id;
-            string pathToCut = n1 + " " + n2;
-
+            
             var c1 = nodes.FirstOrDefault(n => n.Id == n1);
             var c2 = nodes.FirstOrDefault(n => n.Id == n2);
 
@@ -311,6 +306,12 @@ namespace UnitTestProject1
         public SkyNetCell Parent { get; set; }
 
         public int DistanceFromStart { get; set; }
+
+
+        public int nbConectedGateway
+        {
+            get { return Neighbors.Where(n => n.IsGateWay).Count(); }
+        }
         
     }
 

@@ -67,6 +67,7 @@
     <Compile Include="Horses.cs" />
     <Compile Include="NetworkCabling.cs" />
     <Compile Include="IndianaTests.cs" />
+    <Compile Include="SKyNetStrikeBack\SkyNetGame.cs" />
     <Compile Include="SkyNetVirus.cs" />
     <Compile Include="SuiteDeConway.cs" />
     <Compile Include="NumeroTelephone.cs" />
